@@ -11,6 +11,8 @@ using Twarz.API.Application.Requests.Queries;
 using Twarz.API.Domains.Enums;
 using Newtonsoft.Json;
 using System.Text;
+using Microsoft.AspNetCore.SignalR;
+using Twarz.API.Hubs;
 
 namespace Twarz.API.Controllers
 {
@@ -20,10 +22,12 @@ namespace Twarz.API.Controllers
     public class RequestController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IHubContext<NotificationHub, INotificationHub> _notification;
 
-        public RequestController(IMediator mediator)
+        public RequestController(IMediator mediator, IHubContext<NotificationHub, INotificationHub> notification)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            _notification = notification ?? throw new ArgumentNullException();
         }
 
 
@@ -91,6 +95,13 @@ namespace Twarz.API.Controllers
             {
                 return new NotFoundResult();
             }
+
+            await _notification.Clients.Group(id.ToString()).SendMessage(new Notification
+            {
+                RequestId = id.ToString(),
+                SessionName = "Un cliente",
+                Status = ((RequestStatusEnum)newStatus).ToString(),
+            });
             return new ObjectResult(result) { StatusCode = StatusCodes.Status200OK };
         }
 
@@ -112,6 +123,18 @@ namespace Twarz.API.Controllers
             var query = new GetListRequestQuery(documentNumber);
             var requests = await _mediator.Send(query);
             return Ok(requests);
+        }
+
+
+        [HttpGet("{id}/{newStatus}")]
+        public async Task SendNotification(int id, int newStatus)
+        {
+            await _notification.Clients.Group(id.ToString()).SendMessage(new Notification
+            {
+                RequestId = id.ToString(),
+                SessionName = "Un cliente",
+                Status = ((RequestStatusEnum)newStatus).ToString(),
+            });
         }
 
     }

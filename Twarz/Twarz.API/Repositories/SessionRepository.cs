@@ -14,7 +14,7 @@ namespace Twarz.API.Repositories
         public async Task<IEnumerable<Session>> GetSessionsByDocumentNumber(string documentNumber)
         {
             var sessionList = await _dbContext.Session
-                .Where(o => o.DocumentNumber == documentNumber)
+                .Where(o => o.DocumentNumber == documentNumber || o.PersonalNumber == documentNumber)
                 .OrderByDescending(o => o.CreatedDate)
                 .ToListAsync(); 
             return sessionList;

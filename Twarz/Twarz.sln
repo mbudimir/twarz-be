@@ -5,7 +5,9 @@ VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{051E2680-9C22-4813-9A2F-1306BF90BA6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Twarz.API", "Twarz.API\Twarz.API.csproj", "{0FBA3BEC-27D9-4503-BF2A-856F881EF9A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Twarz.API", "Twarz.API\Twarz.API.csproj", "{0FBA3BEC-27D9-4503-BF2A-856F881EF9A9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionRest", "FunctionRest\FunctionRest.csproj", "{BD3ED7AB-3645-4148-B434-72A816EB3294}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,12 +19,17 @@ Global
 		{0FBA3BEC-27D9-4503-BF2A-856F881EF9A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FBA3BEC-27D9-4503-BF2A-856F881EF9A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FBA3BEC-27D9-4503-BF2A-856F881EF9A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD3ED7AB-3645-4148-B434-72A816EB3294}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD3ED7AB-3645-4148-B434-72A816EB3294}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD3ED7AB-3645-4148-B434-72A816EB3294}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD3ED7AB-3645-4148-B434-72A816EB3294}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0FBA3BEC-27D9-4503-BF2A-856F881EF9A9} = {051E2680-9C22-4813-9A2F-1306BF90BA6E}
+		{BD3ED7AB-3645-4148-B434-72A816EB3294} = {051E2680-9C22-4813-9A2F-1306BF90BA6E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D6EF28B9-1107-4681-AF8F-D73EA1E30AE0}

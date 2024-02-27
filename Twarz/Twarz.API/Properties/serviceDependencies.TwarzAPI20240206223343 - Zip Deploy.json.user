@@ -3,9 +3,18 @@
     "apis1": {
       "restored": true,
       "restoreTime": "2024-02-07T01:37:34.2383909Z"
+    },
+    "signalr1": {
+      "restored": true,
+      "restoreTime": "2024-02-18T21:42:43.617894Z"
     }
   },
   "parameters": {
+    "signalr1.resourceGroupName": {
+      "Name": "signalr1.resourceGroupName",
+      "Type": "resourceGroup",
+      "Value": "DefaultResourceGroup-EUS"
+    },
     "apis1.resourceGroupName": {
       "Name": "apis1.resourceGroupName",
       "Type": "resourceGroup",
@@ -13,6 +22,11 @@
     },
     "apis1.subscriptionId": {
       "Name": "apis1.subscriptionId",
+      "Type": "subscription",
+      "Value": "49a72d1f-d6f5-408d-89c7-3db1c524ba6d"
+    },
+    "signalr1.subscriptionId": {
+      "Name": "signalr1.subscriptionId",
       "Type": "subscription",
       "Value": "49a72d1f-d6f5-408d-89c7-3db1c524ba6d"
     }

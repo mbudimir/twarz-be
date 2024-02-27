@@ -16,7 +16,8 @@ namespace Twarz.API.Repositories
             var requestList = await _dbContext.Request
                 //.Include(x => x.Session)
                 .Include(x=> x.Company)
-                .Where(o => o.Session.DocumentNumber == documentNumber)
+                .Where(o => o.Session.DocumentNumber == documentNumber || o.Session.PersonalNumber == documentNumber)
+                .OrderByDescending(o => o.CreatedDate)
                 .ToListAsync();
             return requestList;
         }

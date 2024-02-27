@@ -18,8 +18,10 @@ using MediatR;
 using Twarz.API.Application.Behaviours;
 using Microsoft.Extensions.Configuration;
 using Twarz.API.Authentication;
+using Twarz.API.Hubs;
 using Twarz.API.Models;
 using Twarz.API.Services;
+using Twarz.API.SubscribeTableDependencies;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -48,7 +50,9 @@ builder.Services.AddCors(options =>
                 "https://twarz-29eb8.web.app",
                 "https://twarz-29eb8.web.app/request")
                 .AllowAnyHeader()
-                .AllowAnyMethod(); ;
+                .AllowAnyMethod()
+                .AllowCredentials()
+                .SetIsOriginAllowed((host) => true);
         });
 });
 
@@ -87,6 +91,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSingleton<SubscribeTableDependency>();
+
 //builder.Services.AddAuthentication(options =>
 //{
 //    options.DefaultAuthenticateScheme = ApiKeyAuthOptions.DefaultScheme;
@@ -113,6 +119,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 app.UseCors(MyAllowSpecificOrigins);
@@ -129,10 +137,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseAuthorization();
+
+//app.Services.GetService<SubscribeTableDependency>()?.SubscribeTableRequestDependency();
+
+app.MapHub<NotificationHub>("/Notify");
 
 app.MapControllers();
 
