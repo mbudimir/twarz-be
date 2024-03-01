@@ -13,6 +13,8 @@ using Newtonsoft.Json;
 using System.Text;
 using Microsoft.AspNetCore.SignalR;
 using Twarz.API.Hubs;
+using static Twarz.API.Models.PushTemplates;
+using System;
 
 namespace Twarz.API.Controllers
 {
@@ -43,40 +45,7 @@ namespace Twarz.API.Controllers
                 GetSessionbyIdQuery sessionCommand = new GetSessionbyIdQuery(command.SessionId);
                 var sessionResult = await _mediator.Send(sessionCommand);
 
-                using (var client = new HttpClient())
-                {
-                    // por el momento harcode aqui
-                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("key", "=" + "AAAAJwZdmw4:APA91bFkHUrFY2dhavJZ7LZ2TeWAkfmrhZbbGnTvGMDvYrcfVGdGX-BR_CoT0tRavUF-MgLRIv30A3bR1sRyFpzAxFk3-g2mS5XxGmjNEWhjfAsjSB2iHyErKTLuBXeY2Evcx9JwGkPi");
-                    //var registrationToken = "cU7ccZXeS8eUAHa_oDJxv_:APA91bGuzH7Q9JiSchzbgPODmF7mYYhbwj1Npin5C7IkCu5nhOTK_orZUP9VuvFbr-GXD-6hgq322yzJvx-W3pjFuDsJPqLDhhvnET-NogiCfm3cQhVYhlr5U-RvnegIh65rsAnpBgsQ";
-
-                    
-                    var pushNotificationRequest = new PushNotificationRequest
-                    {
-                        notification = new NotificationMessageBody
-                        {
-                            title = "New join request",
-                            body = "A company to request for join then"
-                        },
-                        // data = androidNotificationObject,
-                        registration_ids = new List<string> { sessionResult.TokenDevice }
-                    };
-
-                    string serializeRequest = JsonConvert.SerializeObject(pushNotificationRequest);
-                    var response = await client.PostAsync(url, new StringContent(serializeRequest, Encoding.UTF8, "application/json"));
-                    Console.WriteLine(response.Content);
-                    
-                    ///////////////// Por el momento no hago nada sino puede mandar el mensaje /////////////////
-                    //if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                    //{
-                    //    Console.WriteLine(response.Content);
-                    //    //return Ok("Message sent successfully!");
-                    //}
-                    //else
-                    //{
-                    //    // There was an error sending the message
-                    //    //throw new Exception("Error sending the message.");
-                    //}
-                }
+                await SendNotification(sessionResult.TokenDevice, "Ha recibido una solicitud de verificación");
             }
             return new ObjectResult(result) { StatusCode = StatusCodes.Status201Created };
         }
@@ -95,6 +64,10 @@ namespace Twarz.API.Controllers
             {
                 return new NotFoundResult();
             }
+            if (result == -1)
+            {
+                return new BadRequestResult();
+            }
 
             await _notification.Clients.Group(id.ToString()).SendMessage(new Notification
             {
@@ -102,6 +75,16 @@ namespace Twarz.API.Controllers
                 SessionName = "Un cliente",
                 Status = ((RequestStatusEnum)newStatus).ToString(),
             });
+
+
+            GetByIdRequestQuery query = new GetByIdRequestQuery(id);
+
+            if (((RequestStatusEnum)newStatus) == RequestStatusEnum.TimeOut)
+            {
+                var sessionResult = await _mediator.Send(query);
+                await SendNotification(sessionResult.Session.TokenDevice, "La solicitud ha caducado por timeout");
+            }
+
             return new ObjectResult(result) { StatusCode = StatusCodes.Status200OK };
         }
 
@@ -125,16 +108,31 @@ namespace Twarz.API.Controllers
             return Ok(requests);
         }
 
-
-        [HttpGet("{id}/{newStatus}")]
-        public async Task SendNotification(int id, int newStatus)
+        private async Task SendNotification(string tokenDevice, string message)
         {
-            await _notification.Clients.Group(id.ToString()).SendMessage(new Notification
+            string url = "https://fcm.googleapis.com/fcm/send";
+            using (var client = new HttpClient())
             {
-                RequestId = id.ToString(),
-                SessionName = "Un cliente",
-                Status = ((RequestStatusEnum)newStatus).ToString(),
-            });
+                // por el momento harcode aqui
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("key", "=" + "AAAAJwZdmw4:APA91bFkHUrFY2dhavJZ7LZ2TeWAkfmrhZbbGnTvGMDvYrcfVGdGX-BR_CoT0tRavUF-MgLRIv30A3bR1sRyFpzAxFk3-g2mS5XxGmjNEWhjfAsjSB2iHyErKTLuBXeY2Evcx9JwGkPi");
+
+                var pushNotificationRequest = new PushNotificationRequest
+                {
+                    notification = new NotificationMessageBody
+                    {
+                        title = "Twarz",
+                        body = message
+                    },
+                    // data = androidNotificationObject,
+                    registration_ids = new List<string> { tokenDevice }
+                };
+
+                string serializeRequest = JsonConvert.SerializeObject(pushNotificationRequest);
+                var response = await client.PostAsync(url, new StringContent(serializeRequest, Encoding.UTF8, "application/json"));
+                Console.WriteLine(response.Content);
+
+
+            }
         }
 
     }

@@ -28,6 +28,12 @@ namespace Twarz.API.Application.Requests.Commands
                 return 0;
             }
 
+            if (requestEntity.Status != RequestStatusEnum.Pending)
+            {
+                _logger.LogInformation("No se puede modificar una solicitud que no esta pendiente.");
+                return -1;
+            }
+
             requestEntity.Status = request.newState;
 
             await _requestRepository.UpdateAsync(requestEntity);

@@ -9,7 +9,7 @@ namespace Twarz.API.Application.Requests.Queries
         public int Id { get; set; }
         public CompanyMv Company { get; set; }
         public DateTime RequestDate { get; set; }
-        // public SessionMv Session { get; set; }
+        public SessionRequestMv Session { get; set; }
         public DateTime? SessionDate { get; set; }
         public RequestStatusEnum Status { get; set; } = RequestStatusEnum.Pending;
     }

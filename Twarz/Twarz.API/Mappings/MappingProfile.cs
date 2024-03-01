@@ -13,6 +13,7 @@ namespace Twarz.API.Mappings
         public MappingProfile()
         {
             CreateMap<Session, SessionMv>().ReverseMap();
+            CreateMap<Session, SessionRequestMv>().ReverseMap();
             CreateMap<Company, CompanyMv>().ReverseMap();
             CreateMap<Request, RequestMv>().ReverseMap();
             CreateMap<Request, RequestCompanyMv>().ReverseMap();
