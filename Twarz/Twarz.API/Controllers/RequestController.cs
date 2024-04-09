@@ -50,6 +50,18 @@ namespace Twarz.API.Controllers
             return new ObjectResult(result) { StatusCode = StatusCodes.Status201Created };
         }
 
+
+        [HttpGet("{id}", Name = "GetRequestById")]
+        [ProducesResponseType(typeof(RequestMv), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<RequestMv>> GetRequestById(int id)
+        {
+
+            GetByIdRequestQuery query = new GetByIdRequestQuery(id);
+            var requests = await _mediator.Send(query);
+            return Ok(requests);
+        }
+
+
         [HttpPatch("{id}/{newStatus}", Name = "UpdateStatusRequest/{id:int}/{newStatus:int}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<ActionResult<int>> UpdateStatusRequest(int id, int newStatus)

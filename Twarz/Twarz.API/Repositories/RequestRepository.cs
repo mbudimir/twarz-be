@@ -28,6 +28,7 @@ namespace Twarz.API.Repositories
                 .Include(x => x.Session)
                 .Include(x => x.Company)
                 .Where(o => o.Company.Id == companyId)
+                .OrderByDescending(x => x.RequestDate)
                 .ToListAsync();
             return requestList;
         }
